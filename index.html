@@ -29,14 +29,7 @@
       				max-width: 400px;
       				margin: auto;
     			}
-    			input[type="number"] {
-      				width: 100%;
-      				padding: 8px;
-     				margin: 8px 0;
-      				background-color: #333;
-      				border: 1px solid #FFD700;
-      				color: #FFD700;
-    			}
+    			
     			button {
       				background-color: #FFD700;
       				color: #000;
@@ -46,54 +39,27 @@
       				font-weight: bold;
       				cursor: pointer;
     			}
-    			#screensPermissible {
-      				margin-top: 20px;
-      				font-size: 18px;
-      				text-align: center;
-    			}
-			#leftover {
-      				margin-top: 20px;
-      				font-size: 14px;
-      				text-align: center;
-    			}
+    			
   		</style>
 	</head>
+
+
 	<body>
 		<div class="header">
     			<div class="logo">
-				<img src="./PBSlogo.png" width="70" height="60">
+				<img src="./PBSlogo.png" width="140" height="120">
 				<div id="logText">Screen Space Estimator</div>
 			</div>
   		</div>
   		<div class="container">
-    			<label>Space Length (ft):</label>
-    			<input type="number" id="spaceLength" value="10" min="0">
+    			<label>Estimator Version 1.0</label>
+    			<a href = "./ScreenSpaceEstimator1.html">View</a><br><br><br>
     			
-			<label>Space Width (ft):</label>
-    			<input type="number" id="spaceWidth" value="8" min="0">
+				<label>Estimator Version 2.0</label>
+    			<a href = "./ScreenSpaceEstimator2.html">View</a>
     			
-			<button onclick="calculateScreens()">Calculate</button>
+				
  			
-			<div id="screensPermissible"></div>
 			
-			<div id="leftover"></div>
-  		</div>
-
-  		<script>
-    			function calculateScreens() {
-      				let length = parseFloat(document.getElementById('spaceLength').value);
-      				let width = parseFloat(document.getElementById('spaceWidth').value);
-				
-      				let screensFit = Math.floor(length / 1.6) * Math.floor(width / 1.6);
-				
-				let rawLeftOver = (length * width)-(1.6 * 1.6 * screensFit);
-				let leftOver = rawLeftOver.toFixed(1);
-				
-				
-				
-      																							document.getElementById('screensPermissible').innerText = `Screens that will fit: ${screensFit}`;
-				document.getElementById('leftover').innerText = `Leftover Space: ${leftOver}  square feets unevenly spread across the length and breadth of the space`;
-    			}
-  		</script>
 	</body>
 </html>

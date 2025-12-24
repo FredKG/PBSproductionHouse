@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<!---This works on the premise that the screen size is constanty 1.6ft by 1.6ft. Changes to this will have to be manually adjusted in the javascripts computations--->
+	<head>
+		<title>Screen Space Estimator2.0</title>
+		<style>
+    			body {
+      				font-family: Arial, sans-serif;
+      				background-color: #000;
+      				color: #FFD700;
+      				margin: 0;
+    			}
+    			.header {
+      				background-color: #FFD700;
+      				padding: 10px;
+     				text-align: center;
+    			}
+    			.logo {
+      				font-size: 32px;
+      				color: #000;
+      				font-weight: bold;
+    			}
+			    .logoText {
+				padding: 10px
+			    }
+    			.container {
+      				padding: 20px;
+      				max-width: 400px;
+      				margin: auto;
+    			}
+    			input[type="number"] {
+      				width: 100%;
+      				padding: 8px;
+     				margin: 8px 0;
+      				background-color: #333;
+      				border: 1px solid #FFD700;
+      				color: #FFD700;
+    			}
+    			button {
+      				background-color: #FFD700;
+      				color: #000;
+      				padding: 10px;
+      				border: none;
+      				width: 100%;
+      				font-weight: bold;
+      				cursor: pointer;
+    			}
+    			#screensPermissible, #leftover, #maxRows, #maxCols {
+      				margin-top: 10px;
+      				/***font-size: 18px;**/
+      				text-align: center;
+    			}
+			
+
+			.grid-container {
+				display: grid;
+				margin: 30px auto;
+                background-color: #6b0101;
+                border: 2px solid #ffd700;
+				justify-content: start;
+        		align-content: start;
+			}
+			.screen {
+				background-color: #444;
+				border: 1px solid #6f00ff;
+				display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 10px;
+                color: #fff;
+			}
+            .leftover {
+                background-color: #420c0c;
+                border: 1px dashed #FFD700;
+            }
+  		</style>
+	</head>
+
+
+	<body>
+		<div class="header">
+    			<div class="logo">
+				    <img src="./PBSlogo.png" width="70" height="50">
+				<div id="logText">Screen Space Estimator</div>
+			</div>
+  		</div>
+  		<div class="container">
+    		<label>Space Length (ft):</label>
+    		<input type="number" id="spaceLength" value="10" min="0">
+    			
+			<label>Space Width (ft):</label>
+    		<input type="number" id="spaceWidth" value="8" min="0">
+    			
+			<button onclick="calculateScreens()">Calculate</button>
+ 			
+			<div id="screensPermissible"></div><br>
+			<div id="maxRows"></div>
+			<div id="maxCols"></div><br><br>
+			<div id="leftover"></div>
+  		</div>
+		
+		<div id="displayArea"></div>
+		
+		<button onclick="window.print()">Print / Save as PDF</button>
+  		
+		<script>
+    			function calculateScreens() {
+      				const lengthFT = parseFloat(spaceLength.value);
+      				const widthFT = parseFloat(spaceWidth.value);
+					
+					const screenSizeFT = 1.6;
+                    const scale = 50;
+                    const screenSizePX = screenSizeFT * scale;
+
+					const rawRows = (lengthFT / screenSizeFT).toFixed(2);
+					const rawCols = (widthFT / screenSizeFT).toFixed(2);
+
+                    const cols = Math.trunc(rawCols);
+                    const rows = Math.trunc(rawRows);
+
+
+      				const screensFit = rows * cols;
+                    
+                    const leftoverWidthFT = widthFT - (cols*screenSizeFT);
+                    const leftoverLengthFT = lengthFT - (rows*screenSizeFT);
+                    
+                    const rawLeftOver = (lengthFT * widthFT) - (screenSizeFT * screenSizeFT * screensFit);
+                    const leftOver = rawLeftOver.toFixed(1);
+					
+                    const leftoverWidthPX = leftoverWidthFT * scale;
+                    const leftoverLengthPX = leftoverLengthFT * scale;
+                    
+				
+      				document.getElementById('screensPermissible').innerText = `Screens that will fit: ${screensFit}`;
+      				document.getElementById('maxRows').innerText = `Screens per Row: ${rows}`;
+      				document.getElementById('maxCols').innerText = `Screens per Column: ${cols}`;
+					
+                    document.getElementById('leftover').innerText = 
+                        leftOver > 0
+                        ? `Leftover Space: ${leftOver} sq ft`
+                        : `Leftover Space: None`;
+
+                    const grid = document.createElement('div');
+                    grid.className = 'grid-container';
+					
+					grid.style.width  = (widthFT * scale) + 'px';
+    				grid.style.height = (lengthFT * scale) + 'px';
+
+                    grid.style.gridTemplateColumns = 
+                        `repeat(${cols}, ${screenSizePX}px)` +
+                        (leftoverWidthPX > 80 ? ` ${leftoverWidthPX}px` : '');
+
+                    grid.style.gridTemplateRows =
+                        `repeat(${rows}, ${screenSizePX}px)` +
+                        (leftoverLengthPX > 80 ? ` ${leftoverLengthPX}px` : '');
+					
+
+                    
+
+
+                    for (let i = 0; i < screensFit; i++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'screen';
+                        cell.textContent = i + 1;
+                        grid.appendChild(cell);
+                    }
+
+                    /* RIGHT-SIDE LEFTOVER */
+                    if (leftoverWidthPX > 0) {
+                        for (let r = 0; r < rows; r++) {
+                            const l = document.createElement('div');
+                            l.className = 'leftover';
+                            grid.appendChild(l);
+                        }
+                    }
+
+                    /* BOTTOM LEFTOVER */
+                    if (leftoverLengthPX > 0) {
+                        for (let c = 0; c < cols; c++) {
+                            const l = document.createElement('div');
+                            l.className = 'leftover';
+                            grid.appendChild(l);
+                        }
+
+                        if (leftoverWidthPX > 0) {
+                            const corner = document.createElement('div');
+                            corner.className = 'leftover';
+                            grid.appendChild(corner);
+                        }
+                    }
+
+                    const display = document.getElementById('displayArea');
+                    display.innerHTML = '';
+                    display.appendChild(grid);           
+                    
+                
+    			}
+  		</script>
+	</body>
+</html>

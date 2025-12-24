@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<!---This works on the premise that the screen size is constanty 1.6ft by 1.6ft. Changes to this will have to be manually adjusted in the javascripts computations--->
+	<head>
+		<title>Screen Space Estimator</title>
+		<style>
+    			body {
+      				font-family: Arial, sans-serif;
+      				background-color: #000;
+      				color: #FFD700;
+      				margin: 0;
+      				padding: 0;
+    			}
+    			.header {
+      				background-color: #FFD700;
+      				padding: 10px;
+     				text-align: center;
+    			}
+    			.logo {
+      				font-size: 32px;
+      				color: #000;
+      				font-weight: bold;
+    			}
+			.logoText {
+				padding: 10px
+			}
+    			.container {
+      				padding: 20px;
+      				max-width: 400px;
+      				margin: auto;
+    			}
+    			input[type="number"] {
+      				width: 100%;
+      				padding: 8px;
+     				margin: 8px 0;
+      				background-color: #333;
+      				border: 1px solid #FFD700;
+      				color: #FFD700;
+    			}
+    			button {
+      				background-color: #FFD700;
+      				color: #000;
+      				padding: 10px;
+      				border: none;
+      				width: 100%;
+      				font-weight: bold;
+      				cursor: pointer;
+    			}
+    			#screensPermissible {
+      				margin-top: 20px;
+      				font-size: 18px;
+      				text-align: center;
+    			}
+			#leftover #maxRows #maxCols{
+      				margin-top: 20px;
+      				font-size: 14px;
+      				text-align: center;
+    			}
+
+
+
+
+
+			.grid-container {
+				display: grid;
+				gap: 2px;
+				margin-top: 20px;
+			}
+			.screen {
+				background-color: #444;
+				border: 1px solid #FFD700;
+				text-align: center;
+				font-size: 10px;
+				padding: 2px;
+			}
+  		</style>
+	</head>
+
+
+	<body>
+		<div class="header">
+    			<div class="logo">
+				<img src="./PBSlogo.png" width="70" height="60">
+				<div id="logText">Screen Space Estimator</div>
+			</div>
+  		</div>
+  		<div class="container">
+    			<label>Space Length (ft):</label>
+    			<input type="number" id="spaceLength" value="10" min="0">
+    			
+			<label>Space Width (ft):</label>
+    			<input type="number" id="spaceWidth" value="8" min="0">
+    			
+			<button onclick="calculateScreens()">Calculate</button>
+ 			
+			<div id="screensPermissible"></div><br>
+			<div id="maxRows"></div>
+			<div id="maxCols"></div><br><br>
+			<div id="leftover"></div>
+  		</div>
+		<div id="displayArea"></div>
+
+  		<script>
+    			function calculateScreens() {
+      				let length = parseFloat(document.getElementById('spaceLength').value);
+      				let width = parseFloat(document.getElementById('spaceWidth').value);
+					
+					let screenSize = 1.6;
+					let cols = Math.floor(width / screenSize);
+					let rows = Math.floor(length / screenSize);
+
+
+      				let screensFit = rows * cols;
+				
+					let rawLeftOver = (length * width) - (screenSize * screenSize * screensFit);
+					let leftOver = rawLeftOver.toFixed(1);
+				
+      				document.getElementById('screensPermissible').innerText = `Screens that will fit: ${screensFit}`;
+      				document.getElementById('maxRows').innerText = `Screens per Row: ${rows}`;
+      				document.getElementById('maxCols').innerText = `Screens per Column: ${cols}`;
+					document.getElementById('leftover').innerText = `Leftover Space: ${leftOver}  square feets unevenly spread across the length and breadth of the space`;
+
+
+
+
+					let gridHTML = '';
+
+					for(let r=0;r<rows;r++) {
+						for(let c=0;c<cols;c++){
+							gridHTML+=`<div class="screen">${r*cols + c + 1}</div>`;
+						}
+						gridHTML+=`<div class="leftover-cell" style="grid-column:${cols+1}; grid-row:${r+1};">R</div>`;					
+					}
+					for(let c=0;c<cols;c++){
+						gridHTML+=`<div class="leftover-cell" style="grid-column:${c+1}; grid-row:${rows+1};">B</div>`;
+					}
+					gridHTML+=`<div class="leftover-cell" style="grid-column:${cols+1}; grid-row:${rows+1};">C</div>`;					
+
+					let container = document.createElement('div');
+					container.className = 'grid-container';
+					container.style.gridTemplateColumns = `repeat(${cols+1},1fr)`;
+					container.style.gridTemplateRows = `repeat(${rows+1},1fr)`;
+					//container.style.width = `${width * 50}px`;
+					//container.style.height = `${length * 50}px`;
+					container.innerHTML = gridHTML;
+
+					let displayArea = document.getElementById('displayArea');
+					if (!displayArea) {
+						displayArea = document.createElement('div');
+						displayArea.id = 'displayArea';
+						document.querySelector('.container').appendChild(displayArea);
+					}				
+					displayArea.innerHTML = '';
+					displayArea.appendChild(container);
+
+
+
+    			}
+  		</script>
+	</body>
+</html>
