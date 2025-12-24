@@ -112,8 +112,8 @@
                     const scale = 50;
                     const screenSizePX = screenSizeFT * scale;
 
-					const rawRows = (lengthFT / screenSizeFT).toFixed(2);
-					const rawCols = (widthFT / screenSizeFT).toFixed(2);
+					const rawCols = (lengthFT / screenSizeFT).toFixed(2);
+					const rawRows = (widthFT / screenSizeFT).toFixed(2);
 
                     const cols = Math.trunc(rawCols);
                     const rows = Math.trunc(rawRows);
@@ -121,8 +121,8 @@
 
       				const screensFit = rows * cols;
                     
-                    const leftoverWidthFT = widthFT - (cols*screenSizeFT);
-                    const leftoverLengthFT = lengthFT - (rows*screenSizeFT);
+                    const leftoverWidthFT = widthFT - (rows*screenSizeFT);
+                    const leftoverLengthFT = lengthFT - (cols*screenSizeFT);
                     
                     const rawLeftOver = (lengthFT * widthFT) - (screenSizeFT * screenSizeFT * screensFit);
                     const leftOver = rawLeftOver.toFixed(1);
@@ -137,7 +137,7 @@
 					
                     document.getElementById('leftover').innerText = 
                         leftOver > 0
-                        ? `Leftover Space: ${leftOver} sq ft`
+                        ? `Leftover Space: ${leftOver} sq ft. This is indicated by the reddish-wine colour in the visual below`
                         : `Leftover Space: None`;
 
                     const grid = document.createElement('div');
@@ -147,11 +147,11 @@
     				grid.style.height = (lengthFT * scale) + 'px';
 
                     grid.style.gridTemplateColumns = 
-                        `repeat(${cols}, ${screenSizePX}px)` +
+                        `repeat(${rows}, ${screenSizePX}px)` +
                         (leftoverWidthPX > 80 ? ` ${leftoverWidthPX}px` : '');
 
                     grid.style.gridTemplateRows =
-                        `repeat(${rows}, ${screenSizePX}px)` +
+                        `repeat(${cols}, ${screenSizePX}px)` +
                         (leftoverLengthPX > 80 ? ` ${leftoverLengthPX}px` : '');
 					
 
@@ -167,7 +167,7 @@
 
                     /* RIGHT-SIDE LEFTOVER */
                     if (leftoverWidthPX > 0) {
-                        for (let r = 0; r < rows; r++) {
+                        for (let r = 0; r < cols; r++) {
                             const l = document.createElement('div');
                             l.className = 'leftover';
                             grid.appendChild(l);
@@ -176,7 +176,7 @@
 
                     /* BOTTOM LEFTOVER */
                     if (leftoverLengthPX > 0) {
-                        for (let c = 0; c < cols; c++) {
+                        for (let c = 0; c < rows; c++) {
                             const l = document.createElement('div');
                             l.className = 'leftover';
                             grid.appendChild(l);
